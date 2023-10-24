@@ -2,7 +2,7 @@ R | 4.3.1
 minimaxdesign | 0.1.5
 ggplot2 | 3.4.4
 
-0. Compute 100 $\psi$-rhosq-kappa-gamma combinations for the computer
+0. Compute 100 $\rho^2, \kappa, \gamma$ points for the computer
    experiment and check whether MLE asymptotically exists for each one
 
 ```bash
