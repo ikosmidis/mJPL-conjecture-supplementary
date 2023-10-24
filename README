@@ -5,12 +5,13 @@ ggplot2 | 3.4.4
 0. Compute 100 psi-rhosq-kappa-gamma combinations for the computer
    experiment and check whether MLE asymptotically exists for each one
 
-% Rscript --no-init-file -e 'project_path <- ".";
-  	                     ncores <- 10;
-			     npoints <- 100;
-			     seed <- 0;
-			     suffix <- "estimate";
-			     source(file.path(project_path, "code/0-settings.R"))'
+% Rscript --no-init-file -e
+  'project_path <- ".";
+   ncores <- 10;
+   npoints <- 100;
+   seed <- 0;
+   suffix <- "estimate";
+   source(file.path(project_path, "code/0-settings.R"))'
 
 1. Simulate `repetitions = 50` data sets per setting and get mJPL and ML estimates
    (whenever the latter exist asymptotically)
