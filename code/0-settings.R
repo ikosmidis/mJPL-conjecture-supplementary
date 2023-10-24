@@ -2,15 +2,13 @@ library("parallel")
 library("minimaxdesign")
 
 if (interactive()) {
-    project_path <- "~/Desktop/mJPL-conjecture"
+    project_path <- "~/Repositories/mJPL-conjecture-supplementary"
     ## Number of cores to use for determining whether MLE exists across settings
     ncores <- 10
     ## Number of points to generate on the rhosq-kappa-gamma space
     npoints <- 100
     ## seed
     seed <- 0
-    ## suffix for image file
-    suffix <- "estimate"
 }
 image_path <- file.path(project_path, "images")
 code_path <- file.path(project_path, "code")
@@ -55,10 +53,8 @@ design$kappa_diff <- mclapply(seq.int(nrow(design)), function(j) {
 
 design$mle_exists <- design$kappa_diff > 0
 
-experiment_settings <- design
-
-save(experiment_settings,
-     file = file.path(image_path, paste0("experiment-settings-", suffix, ".rda")))
+save(design,
+     file = file.path(image_path, paste0("design-training.rda")))
 
 
 ## Plots for main text
