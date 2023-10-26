@@ -6,13 +6,13 @@ if (interactive()) {
     ## Number of cores to use for the computation of phase transition curves
     ncores <- 10
     ## Number of observations per dataset
-    nobs <- 1000
+    nobs <- 2000
     ## psi value
     psi <- 0.5
     ## beta star setting
     beta_star_setting <- "u2"
     ## Number of independent repetitions per rhosq-kappa-gamma setting
-    repetitions <- 10
+    repetitions <- 50
     ## seed for generating unique seeds
     seed <- 0
 
@@ -29,14 +29,14 @@ source(file.path(code_path, "helper-functions.R"))
 out_path <- file.path(image_path, paste0("estimates-n-", nobs,
                                          "-beta-", beta_star_setting,
                                          "-psi-", psi,
-                                         "-estimate",
+                                         "-training",
                                          ".rda"))
 
 ## Get settings
-load(file.path(image_path, paste0("experiment-settings-", suffix, ".rda")))
+load(file.path(image_path, paste0("design-training.rda")))
 
-experiment_settings <- cbind(psi, experiment_settings)
-e_settings <- experiment_settings[rep(1:nrow(experiment_settings), each = repetitions), ]
+design <- cbind(psi, design)
+e_settings <- design[rep(1:nrow(design), each = repetitions), ]
 n_settings <- nrow(e_settings)
 
 ## Add distinct seeds to experiment settings

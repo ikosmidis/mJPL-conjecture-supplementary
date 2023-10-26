@@ -63,11 +63,13 @@ if (FALSE) {
     library("ggplot2")
     library("patchwork")
     library("dplyr")
-    load(file.path(image_path, paste0("experiment-settings-", suffix, ".rda")))
+    load(file.path(image_path, paste0("design-training.rda")))
 
     okabe <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
-    e_set <- experiment_settings |> mutate(`MLE exists` = ifelse(mle_exists, "yes", "no"))
+    e_set <- design |> mutate(`MLE exists` = ifelse(mle_exists, "yes", "no"),
+                              alpha = gamma * sqrt(rhosq),
+                              gamma0 = gamma * sqrt(1 - rhosq))
 
     p_kg <- ggplot(e_set) +
         geom_point(aes(kappa, gamma, col = `MLE exists`, pch = `MLE exists`), alpha = 0.8) +
@@ -85,17 +87,24 @@ if (FALSE) {
         labs(y = expression(rho^2), x = expression(gamma)) +
         scale_color_discrete(type = okabe)
 
-    p_rk <- ggplot(e_set) +
-        geom_point(aes(rhosq, kappa, col = `MLE exists`, pch = `MLE exists`), alpha = 0.8) +
-        lims(x = c(0, 1), y = c(0, 0.6)) +
+    p_kr <- ggplot(e_set) +
+        geom_point(aes(kappa, rhosq, col = `MLE exists`, pch = `MLE exists`), alpha = 0.8) +
+        lims(y = c(0, 1), x = c(0, 0.6)) +
         theme_minimal() +
         theme(legend.position = "none") +
-        labs(y = expression(kappa), x = expression(rho^2)) +
+        labs(x = expression(kappa), y = expression(rho^2)) +
         scale_color_discrete(type = okabe)
 
+    p_ag0 <- ggplot(e_set) +
+        geom_point(aes(x = alpha, y = gamma0, col = rhosq)) +
+        labs(y = expression(gamma[0]), x = expression(alpha)) +
+        scale_color_continuous(type = "viridis", name = expression(rho^2)) +
+        theme_bw() +
+        theme(legend.position = "top")
+
     ## pdf(file.path(figure_path, "design.pdf"), width = 9, height = 4)
-    pdf(file.path("~/Repositories/mJPL-conjecture/figures", "design.pdf"), width = 7, height = 3)
-    p_kg + p_gr + p_rk
+    pdf(file.path("~/Repositories/mJPL-conjecture/figures", "design.pdf"), width = 7, height = 7/sqrt(2))
+    (p_kg | p_ag0) / (p_kr | p_gr)
     dev.off()
 
 }
