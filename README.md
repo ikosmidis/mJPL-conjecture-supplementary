@@ -33,7 +33,7 @@ Rscript --no-init-file -e \
 
 ```bash
 Rscript --no-init-file -e \
- 'project_path <- "~/Desktop/mJPL-conjecture";
+ 'project_path <- "~/Desktop/mJPL-conjecture-supplementary";
   nobs <- 2000;
   psi <- 0.5;
   beta_star_setting <- "u2";
@@ -44,7 +44,7 @@ Rscript --no-init-file -e \
 
 ```bash
 Rscript --no-init-file -e \
- 'project_path <- "~/Desktop/mJPL-conjecture";
+ 'project_path <- "~/Repositories/mJPL-conjecture-supplementary";
   ncores <- 10;
   nobs <- 1000;
   beta_star_setting <- "s1";
@@ -52,7 +52,7 @@ Rscript --no-init-file -e \
   source(file.path(project_path, "code/3-validation-set.R"))'
 
 Rscript --no-init-file -e \
- 'project_path <- "~/Desktop/mJPL-conjecture";
+ 'project_path <- "~/Repositories/mJPL-conjecture-supplementary";
   ncores <- 10;
   nobs <- 1000;
   beta_star_setting <- "s2";
@@ -60,7 +60,7 @@ Rscript --no-init-file -e \
   source(file.path(project_path, "code/3-validation-set.R"))'
 
 Rscript --no-init-file -e \
- 'project_path <- "~/Desktop/mJPL-conjecture";
+ 'project_path <- "~/Repositories/mJPL-conjecture-supplementary";
   ncores <- 10;
   nobs <- 1000;
   beta_star_setting <- "u1";
@@ -68,7 +68,7 @@ Rscript --no-init-file -e \
   source(file.path(project_path, "code/3-validation-set.R"))'
 
 Rscript --no-init-file -e \
- 'project_path <- "~/Desktop/mJPL-conjecture";
+ 'project_path <- "~/Repositories/mJPL-conjecture-supplementary";
   ncores <- 10;
   nobs <- 1000;
   beta_star_setting <- "u2";
@@ -76,7 +76,7 @@ Rscript --no-init-file -e \
   source(file.path(project_path, "code/3-validation-set.R"))'
 
 Rscript --no-init-file -e \
- 'project_path <- "~/Desktop/mJPL-conjecture";
+ 'project_path <- "~/Repositories/mJPL-conjecture-supplementary";
   ncores <- 10;
   nobs <- 2000;
   beta_star_setting <- "s1";
@@ -84,7 +84,7 @@ Rscript --no-init-file -e \
   source(file.path(project_path, "code/3-validation-set.R"))'
 
 Rscript --no-init-file -e \
- 'project_path <- "~/Desktop/mJPL-conjecture";
+ 'project_path <- "~/Repositories/mJPL-conjecture-supplementary";
   ncores <- 10;
   nobs <- 2000;
   beta_star_setting <- "s2";
@@ -92,7 +92,7 @@ Rscript --no-init-file -e \
   source(file.path(project_path, "code/3-validation-set.R"))'
 
 Rscript --no-init-file -e \
- 'project_path <- "~/Desktop/mJPL-conjecture";
+ 'project_path <- "~/Repositories/mJPL-conjecture-supplementary";
   ncores <- 10;
   nobs <- 2000;
   beta_star_setting <- "u1";
@@ -100,7 +100,7 @@ Rscript --no-init-file -e \
   source(file.path(project_path, "code/3-validation-set.R"))'
 
 Rscript --no-init-file -e \
- 'project_path <- "~/Desktop/mJPL-conjecture";
+ 'project_path <- "~/Repositories/mJPL-conjecture-supplementary";
   ncores <- 10;
   nobs <- 2000;
   beta_star_setting <- "u2";
@@ -108,7 +108,7 @@ Rscript --no-init-file -e \
   source(file.path(project_path, "code/3-validation-set.R"))'
 
 Rscript --no-init-file -e \
- 'project_path <- "~/Desktop/mJPL-conjecture";
+ 'project_path <- "~/Repositories/mJPL-conjecture-supplementary";
   ncores <- 10;
   nobs <- 3000;
   beta_star_setting <- "s1";
@@ -116,7 +116,7 @@ Rscript --no-init-file -e \
   source(file.path(project_path, "code/3-validation-set.R"))'
 
 Rscript --no-init-file -e \
- 'project_path <- "~/Desktop/mJPL-conjecture";
+ 'project_path <- "~/Repositories/mJPL-conjecture-supplementary";
   ncores <- 10;
   nobs <- 3000;
   beta_star_setting <- "s2";
@@ -124,7 +124,7 @@ Rscript --no-init-file -e \
   source(file.path(project_path, "code/3-validation-set.R"))'
 
 Rscript --no-init-file -e \
- 'project_path <- "~/Desktop/mJPL-conjecture";
+ 'project_path <- "~/Repositories/mJPL-conjecture-supplementary";
   ncores <- 10;
   nobs <- 3000;
   beta_star_setting <- "u1";
@@ -132,7 +132,7 @@ Rscript --no-init-file -e \
   source(file.path(project_path, "code/3-validation-set.R"))'
 
 Rscript --no-init-file -e \
- 'project_path <- "~/Desktop/mJPL-conjecture";
+ 'project_path <- "~/Repositories/mJPL-conjecture-supplementary";
   ncores <- 10;
   nobs <- 3000;
   beta_star_setting <- "u2";
