@@ -2,7 +2,7 @@ library("parallel")
 library("brglm2")
 
 if (interactive()) {
-    project_path <- "~/Desktop/mJPL-conjecture"
+    project_path <- "~/Repositories/mJPL-conjecture-supplementary"
     ## Number of cores to use for the computation of phase transition curves
     ncores <- 10
     ## Number of observations per dataset
@@ -12,12 +12,11 @@ if (interactive()) {
     ## beta star setting
     beta_star_setting <- "u2"
     ## Number of independent repetitions per rhosq-kappa-gamma setting
-    repetitions <- 50
+    repetitions <- 100
     ## seed for generating unique seeds
-    seed <- 0
-
+    seed <- 101
 }
-maxit <- 250
+maxit <- 300
 tolerance <- 1e-03
 
 image_path <- file.path(project_path, "images")
@@ -43,7 +42,7 @@ n_settings <- nrow(e_settings)
 set.seed(seed)
 dup_check <- TRUE
 while (dup_check) {
-    e_settings$seed <- round(runif(n_settings) * 1000000)
+    e_settings$seed <- round(runif(n_settings) * 100000000)
     dup_check <- length(unique(e_settings$seed)) != n_settings
 }
 

@@ -6,9 +6,9 @@ if (interactive()) {
     ## Number of cores to use for determining whether MLE exists across settings
     ncores <- 10
     ## Number of points to generate on the rhosq-kappa-gamma space
-    npoints <- 100
+    npoints <- 200
     ## seed
-    seed <- 0
+    seed <- 100
 }
 image_path <- file.path(project_path, "images")
 code_path <- file.path(project_path, "code")
@@ -97,7 +97,7 @@ if (FALSE) {
 
     p_ag0 <- ggplot(e_set) +
         geom_point(aes(x = alpha, y = gamma0, col = rhosq)) +
-        labs(y = expression(gamma[0]), x = expression(alpha)) +
+        labs(y = expression(gamma[0]), x = expression(beta[0])) +
         scale_color_continuous(type = "viridis", name = expression(rho^2)) +
         theme_bw() +
         theme(legend.position = "top")

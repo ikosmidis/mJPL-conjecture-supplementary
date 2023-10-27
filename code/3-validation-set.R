@@ -24,7 +24,7 @@ source(file.path(code_path, "helper-functions.R"))
 
 out_path <- file.path(image_path, paste0("estimates-n-", nobs,
                                          "-beta-", beta_star_setting,
-                                         "-validate",
+                                         "-test",
                                          ".rda"))
 
 ## kappa-gamma combinations to consider in the experiment
