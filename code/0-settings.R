@@ -6,7 +6,7 @@ if (interactive()) {
     ## Number of cores to use for determining whether MLE exists across settings
     ncores <- 10
     ## Number of points to generate on the rhosq-kappa-gamma space
-    npoints <- 200
+    npoints <- 100
     ## seed
     seed <- 100
 }

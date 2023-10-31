@@ -5,11 +5,11 @@ library("patchwork")
 library("dplyr")
 
 if (interactive()) {
-    project_path <- "~/Desktop/mJPL-conjecture"
+    project_path <- "~/Repositories/mJPL-conjecture-supplementary"
     ## Number of observations per dataset
-    nobs <- 3000
+    nobs <- 2000
     ## beta star setting
-    beta_star_setting <- "s1"
+    beta_star_setting <- "u1"
     ncores <- 10
     conjecture_model <- "conjecture-n-2000-beta-u2-psi-0.5.rda"
 }
@@ -37,22 +37,22 @@ source(file.path(code_path, "helper-functions.R"))
 
 results_path <- file.path(image_path, paste0("estimates-n-", nobs,
                                              "-beta-", beta_star_setting,
-                                             "-validate",
+                                             "-test",
                                              ".rda"))
 
 load(results_path)
 load(file.path(image_path, conjecture_model))
 ## Get conjecture constants
-po_k <- coef(lm_noMLE)["log(kappa)"]
-po_g <- coef(lm_noMLE)["log(gamma)"]
-po_r <- coef(lm_noMLE)["log(1 - rhosq)"]
+po_k <- coef(glm_noMLE_rhosq)["log(kappa)"]
+po_g <- coef(glm_noMLE_rhosq)["log(gamma)"]
+po_r <- coef(glm_noMLE_rhosq)["log(1 - rhosq)"]
 
 prkg <- unique(estimates[c("psi", "rhosq", "kappa", "gamma", "mle_exists")])
 rhosq_grid <- unique(prkg$rhosq)
 psi_grid <- unique(prkg$psi)
 
 ## Get pt curves
-load(file.path(image_path, "pt-curves-validate.rda"))
+load(file.path(image_path, "pt-curves-test.rda"))
 
 ## Plots
 for (ind_psi in seq_along(psi_grid)) {
@@ -140,6 +140,78 @@ for (ind_psi in seq_along(psi_grid)) {
 
 if (FALSE) {
 
+    library("ggplot2")
+    
+    coefs <- estimates |>
+        filter(parameter > 0) |>
+        group_by(kappa, gamma, rhosq, psi, method, mle_exists) |>
+        summarize(fit = {
+            xmat <- cbind(1, truth)
+            colnames(xmat) <- c("a0", "a1")
+            if (all(is.na(estimate))) {
+                list(rep(NA, 3))
+            } else {
+                obj <- lm.fit(x = xmat, y = estimate)
+                list(c(coef(obj)[1],
+                       coef(obj)[2],
+                       sigma = sqrt(sum(obj$residuals^2) / (obj$df.residual))))
+            }
+        }) |> ## Unlist estimates
+        mutate(
+            a0 = sapply(fit, "[", "a0"),
+            a1 = sapply(fit, "[", "a1"),
+            sigma = sapply(fit, "[", "sigma")) |>
+        mutate(psi_fac = paste("psi ==", psi),
+               method = factor(method, levels = c("ML", "mJPL"), ordered = TRUE))
+
+
+    Rsq <- function(slopes, kappa, gamma, rhosq, pk, pg, pr) {
+        m_la1 <- mean(ll <- log(slopes))
+        tss <- sum((ll - m_la1)^2)
+        resid <- ll - pk * log(kappa) - pg * log(gamma) - pr * log(1 - rhosq)
+        rss <- sum(resid^2)
+        1 - rss / tss
+    }
+
+    rsqs <- coefs |>
+        filter(method == "mJPL", !mle_exists) |>
+        group_by(psi_fac, rhosq) |>
+        summarize(rsq = Rsq(a1, kappa, gamma, rhosq, po_k, po_g, po_r))
+
+    p_rsq_ne <- ggplot(rsqs, aes(rhosq, rsq)) +
+        geom_line() +
+        geom_point() +
+        geom_hline(aes(yintercept = 1), col = "grey", lty = 2) +
+        facet_grid(~ psi_fac, labeller = label_parsed) +
+        theme_minimal() +
+        theme(legend.position = "none") +
+        labs(x = expression(rho^2), y = expression(R["test"]^2))
+
+   p_hist_e <- ggplot(coefs |> filter(mle_exists, a1 < 4)) +
+        geom_histogram(aes(y = a1)) +
+        geom_rug(aes(y = a1)) +
+        geom_hline(aes(yintercept = 1), col = "grey", lty = 2) +
+        facet_grid(method ~ psi) +
+        theme_minimal() +
+        theme(legend.position = "none") +
+        labs(y = expression(delta[1]^"*"))
+
+
+
+    bias <- function(estimates, pk, pg, pr) {
+        dev_un <- estimates$estimate - estimates$truth
+        dev_ad <- estimates$estimate / (estimates$kappa^pk * estimates$gamma^pg * (1 - estimates$rhosq)^pr) - estimates$truth
+        b_un <- mean(dev_un)
+        b_ad <- mean(dev_ad)
+        mse_un <- mean(dev_un^2)
+        mse_ad <- mean(dev_ad^2)
+        data.frame(bias = c(b_un, b_ad), mse = c(mse_un, mse_ad), type = c("vanilla", "rescaled"))
+    }
+
+}
+
+if (FALSE) {
+
     coefs_mJPL <- estimates |>
         filter(parameter > 0, method == "mJPL") |>
         group_by(kappa, gamma, rhosq, psi, method, mle_exists) |>
@@ -156,14 +228,16 @@ if (FALSE) {
             a1 = sapply(fit, "[", "a1"),
             sigma = sapply(fit, "[", "sigma"))
 
-    ## Set a cutpoint that determines small/moderate rhosq values
-    cut_point <- 0.7
+
+
 
     library("ggplot2")
 
     coefs_mJPL$rhosq_fac <- ifelse(coefs_mJPL$rhosq <= cut_point,
                                    paste("rhosq <=", cut_point),
                                    paste("rhosq >", cut_point))
+
+
 
     ggplot(coefs_mJPL |> filter(method == "mJPL")) +
         geom_histogram(aes(a0)) +
@@ -203,6 +277,7 @@ if (FALSE) {
         geom_abline(aes(intercept = 0, slope = 1), col = "red") +
         geom_smooth(method = "lm", formula = y ~ x) +
         facet_wrap(kappa ~ gamma, scales = "free")
+
 
 }
 
@@ -253,7 +328,7 @@ if (FALSE) {
         geom_point(aes(col = gamma)) +
         geom_abline(aes(intercept = 0,  slope = 1))
 
-    
+
     ggplot(ests |> filter(!mle_exists),
            aes(coef(mod_var)["(Intercept)"] +
                log(kappa^coef(mod_var)["log(kappa)"] *
@@ -264,13 +339,13 @@ if (FALSE) {
         geom_abline(aes(intercept = 0,  slope = 1)) +
         facet_grid(gamma ~rhosq)
 
-    
+
     ggplot(ests |> filter(mle_exists),
            aes(log(estimated_sd),
                log(mean_se))) +
         geom_point(aes(col = gamma)) +
         geom_abline(aes(intercept = 0,  slope = 1))
 
-    
+
 
 }

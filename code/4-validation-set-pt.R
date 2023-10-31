@@ -1,7 +1,7 @@
 library("parallel")
 
 if (interactive()) {
-    project_path <- "~/Desktop/mJPL-conjecture"
+    project_path <- "~/Repositories/mJPL-conjecture-supplementary"
     ncores <- 10
     seed <- 123
 }
@@ -33,4 +33,4 @@ for (j in seq_along(rhosq_grid)) {
     pt_curve[[j]] <- do.call("rbind", pt)
 }
 
-save(pt_curve, file = file.path(image_path, "pt-curves-validate.rda"))
+save(pt_curve, file = file.path(image_path, "pt-curves-test.rda"))

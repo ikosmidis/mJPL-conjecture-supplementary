@@ -9,12 +9,12 @@ ggplot2 | 3.4.4
 Rscript --no-init-file -e \
  'project_path <- "~/Repositories/mJPL-conjecture-supplementary/";
   ncores <- 10;
-  npoints <- 200;
-  seed <- 100;
+  npoints <- 100;
+  seed <- 0;
   source(file.path(project_path, "code/0-settings.R"))'
 ```
 
-1. Simulate 50 data sets per design point and get mJPL and ML
+1. Simulate 100 data sets per design point and get mJPL and ML
    estimates (whenever the latter exist asymptotically)
 
 ```bash
