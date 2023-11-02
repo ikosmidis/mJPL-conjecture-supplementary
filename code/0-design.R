@@ -103,8 +103,9 @@ if (FALSE) {
         theme(legend.position = "top")
 
     ## pdf(file.path(figure_path, "design.pdf"), width = 9, height = 4)
-    pdf(file.path("~/Repositories/mJPL-conjecture/figures", "design.pdf"), width = 7, height = 7/sqrt(2))
-    (p_kg | p_ag0) / (p_kr | p_gr)
+    pdf(file.path("~/Repositories/mJPL-conjecture/figures", "design.pdf"), width = 7, height = 2.5)
+    ## (p_kg | p_ag0) / (p_kr | p_gr)
+    (p_kg | p_kr | p_gr | p_ag0)
     dev.off()
 
 }

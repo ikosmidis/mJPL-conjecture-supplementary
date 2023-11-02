@@ -1,8 +1,8 @@
-library("parallel")
 library("ggplot2")
-library("ggpp")
 library("patchwork")
 library("dplyr")
+
+okabe <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
 if (interactive()) {
     project_path <- "~/Repositories/mJPL-conjecture-supplementary"
@@ -24,9 +24,8 @@ po_k <- coef(glm_noMLE_rhosq)["log(kappa)"]
 po_g <- coef(glm_noMLE_rhosq)["log(gamma)"]
 po_r <- coef(glm_noMLE_rhosq)["log(1 - rhosq)"]
 
-
+## Extract test estimates
 all_estimates <- NULL
-
 for (bs in beta_star) {
     for (n in ns) {
         results_path <- file.path(image_path, paste0("estimates-n-", n,
@@ -68,10 +67,10 @@ coefs <- all_estimates |>
            n_fac = factor(n),
            method = factor(method, levels = c("ML", "mJPL"), ordered = TRUE))
 
-Rsq <- function(slopes, kappa, gamma, rhosq, pk, pg, pr) {
-    m_la1 <- mean(ll <- log(slopes), na.rm = TRUE)
-    tss <- sum((ll - m_la1)^2, na.rm = TRUE)
-    resid <- ll - pk * log(kappa) - pg * log(gamma) - pr * log(1 - rhosq)
+Rsq <- function(log_slopes, kappa, gamma, rhosq, pk, pg, pr) {
+    m_la1 <- mean(log_slopes, na.rm = TRUE)
+    tss <- sum((log_slopes - m_la1)^2, na.rm = TRUE)
+    resid <- log_slopes - pk * log(kappa) - pg * log(gamma) - pr * log(1 - rhosq)
     rss <- sum(resid^2, na.rm = TRUE)
     1 - rss / tss
 }
@@ -79,16 +78,17 @@ Rsq <- function(slopes, kappa, gamma, rhosq, pk, pg, pr) {
 rsqs <- coefs |>
     filter(method == "mJPL", !mle_exists) |>
     group_by(n_fac, beta_star, psi_fac, rhosq) |>
-    summarize(rsq = Rsq(a1, kappa, gamma, rhosq, po_k, po_g, po_r))
+    summarize(rsq = Rsq(log(a1), kappa, gamma, rhosq, po_k, po_g, po_r))
+    ## summarize(rsq = Rsq(a1, kappa, gamma, rhosq, -1, -1, 0.5))
 
 
 p_rsq_ne <- ggplot(rsqs, aes(rhosq, rsq)) +
     geom_line(aes(col = n_fac), alpha = 0.5) +
-    geom_point(aes(col = n_fac), alpha = 0.5) +
+    ## geom_point(aes(col = n_fac), alpha = 0.5) +
     geom_hline(aes(yintercept = 1), col = "darkgrey", lty = 1) +
     facet_grid(psi_fac ~ beta_star, labeller = label_parsed) +
     theme_minimal() +
-    theme(legend.position = "left", text = element_text(size = 8)) +
+    theme(legend.position = "left", axis.text = element_text(size = 6)) +
     scale_color_manual(values = okabe, name = "n") +
     coord_cartesian(y = c(0.7, 1)) +
     labs(x = expression(rho^2), y = expression(R["test"]^2), title = "MLE does not exist")
@@ -103,7 +103,7 @@ p_bp_e <- ggplot(coefs_restr) +
     geom_vline(aes(xintercept = 1), col = "grey", lty = 1) +
     facet_grid(psi_fac ~ beta_star, labeller = label_parsed) +
     theme_minimal() +
-    theme(legend.position = "none", text = element_text(size = 8)) +
+    theme(legend.position = "none", axis.text = element_text(size = 6)) +
     scale_color_manual(values = okabe, name = "n") +
     labs(y = "n", x = expression(delta[1]^"*"), title = "MLE exists")
 
@@ -115,12 +115,12 @@ p_bp_int <- ggplot(coefs |> filter(method == "mJPL")) +
     geom_vline(aes(xintercept = 0), col = "grey", lty = 1) +
     facet_grid(psi_fac ~ beta_star, labeller = label_parsed) +
     theme_minimal() +
-    theme(legend.position = "none", text = element_text(size = 8)) +
+    theme(legend.position = "none", axis.text = element_text(size = 6)) +
     scale_color_manual(values = okabe, name = "n") +
     labs(y = "n", x = expression(delta[0]^"*"))
 
-
-pdf(file.path("~/Repositories/mJPL-conjecture/figures", "test.pdf"), width = 8, height = 8/sqrt(2))
+pdf(file.path(project_path, "figures/test.pdf"), width = 9, height = 9/sqrt(2))
+## pdf(file.path("~/Repositories/mJPL-conjecture/figures", "test.pdf"), width = 9, height = 9/sqrt(2))
 layout <- "
 AABB
 CCDD
@@ -128,5 +128,3 @@ CCDD
 (p_bp_int + p_bp_e + guide_area() + p_rsq_ne) +
     plot_layout(design = layout, guides = "collect")
 dev.off()
-
-
