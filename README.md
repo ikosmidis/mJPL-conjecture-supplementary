@@ -2,6 +2,8 @@ R | 4.3.1
 minimaxdesign | 0.1.5
 ggplot2 | 3.4.4
 
+Commit 517815a is with fixed psi = 0.5 in training
+
 0. Compute 100 $(\rho^2, \kappa, \gamma$) points for the computer
    experiment and check whether MLE asymptotically exists for each one
 
