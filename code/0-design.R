@@ -1,5 +1,8 @@
 library("parallel")
 library("minimaxdesign")
+library("ggplot2")
+library("patchwork")
+library("dplyr")
 
 if (interactive()) {
     project_path <- "~/Repositories/mJPL-conjecture-supplementary"
@@ -58,54 +61,46 @@ save(design,
 
 
 ## Plots for main text
-if (FALSE) {
+okabe <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
-    library("ggplot2")
-    library("patchwork")
-    library("dplyr")
-    load(file.path(image_path, paste0("design-training.rda")))
+e_set <- design |> mutate(`MLE exists` = ifelse(mle_exists, "yes", "no"),
+                          alpha = gamma * sqrt(rhosq),
+                          gamma0 = gamma * sqrt(1 - rhosq))
 
-    okabe <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+p_kg <- ggplot(e_set) +
+    geom_point(aes(kappa, gamma, col = `MLE exists`, pch = `MLE exists`), alpha = 0.8) +
+    lims(x = c(0, 0.6), y = c(0, 20)) +
+    theme_minimal() +
+    theme(legend.position = "top") +
+    labs(x = expression(kappa), y = expression(gamma)) +
+    scale_color_discrete(type = okabe)
 
-    e_set <- design |> mutate(`MLE exists` = ifelse(mle_exists, "yes", "no"),
-                              alpha = gamma * sqrt(rhosq),
-                              gamma0 = gamma * sqrt(1 - rhosq))
+p_gr <- ggplot(e_set) +
+    geom_point(aes(gamma, rhosq, col = `MLE exists`, pch = `MLE exists`), alpha = 0.8) +
+    lims(x = c(0, 20), y = c(0, 1)) +
+    theme_minimal() +
+    theme(legend.position = "none") +
+    labs(y = expression(rho^2), x = expression(gamma)) +
+    scale_color_discrete(type = okabe)
 
-    p_kg <- ggplot(e_set) +
-        geom_point(aes(kappa, gamma, col = `MLE exists`, pch = `MLE exists`), alpha = 0.8) +
-        lims(x = c(0, 0.6), y = c(0, 20)) +
-        theme_minimal() +
-        theme(legend.position = "top") +
-        labs(x = expression(kappa), y = expression(gamma)) +
-        scale_color_discrete(type = okabe)
+p_kr <- ggplot(e_set) +
+    geom_point(aes(kappa, rhosq, col = `MLE exists`, pch = `MLE exists`), alpha = 0.8) +
+    lims(y = c(0, 1), x = c(0, 0.6)) +
+    theme_minimal() +
+    theme(legend.position = "none") +
+    labs(x = expression(kappa), y = expression(rho^2)) +
+    scale_color_discrete(type = okabe)
 
-    p_gr <- ggplot(e_set) +
-        geom_point(aes(gamma, rhosq, col = `MLE exists`, pch = `MLE exists`), alpha = 0.8) +
-        lims(x = c(0, 20), y = c(0, 1)) +
-        theme_minimal() +
-        theme(legend.position = "none") +
-        labs(y = expression(rho^2), x = expression(gamma)) +
-        scale_color_discrete(type = okabe)
+p_ag0 <- ggplot(e_set) +
+    geom_point(aes(x = alpha, y = gamma0, col = rhosq)) +
+    labs(y = expression(gamma[0]), x = expression(beta[0])) +
+    scale_color_continuous(type = "viridis", name = expression(rho^2)) +
+    theme_bw() +
+    theme(legend.position = "top")
 
-    p_kr <- ggplot(e_set) +
-        geom_point(aes(kappa, rhosq, col = `MLE exists`, pch = `MLE exists`), alpha = 0.8) +
-        lims(y = c(0, 1), x = c(0, 0.6)) +
-        theme_minimal() +
-        theme(legend.position = "none") +
-        labs(x = expression(kappa), y = expression(rho^2)) +
-        scale_color_discrete(type = okabe)
+pdf(file.path(figure_path, "design.pdf"), width = 7, height = 2.5)
+## pdf(file.path("~/Repositories/mJPL-conjecture/figures", "design.pdf"), width = 7, height = 2.5)
+print((p_kg | p_kr | p_gr | p_ag0))
+dev.off()
 
-    p_ag0 <- ggplot(e_set) +
-        geom_point(aes(x = alpha, y = gamma0, col = rhosq)) +
-        labs(y = expression(gamma[0]), x = expression(beta[0])) +
-        scale_color_continuous(type = "viridis", name = expression(rho^2)) +
-        theme_bw() +
-        theme(legend.position = "top")
 
-    ## pdf(file.path(figure_path, "design.pdf"), width = 9, height = 4)
-    pdf(file.path("~/Repositories/mJPL-conjecture/figures", "design.pdf"), width = 7, height = 2.5)
-    ## (p_kg | p_ag0) / (p_kr | p_gr)
-    (p_kg | p_kr | p_gr | p_ag0)
-    dev.off()
-
-}

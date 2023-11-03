@@ -1,11 +1,6 @@
-R | 4.3.1
-minimaxdesign | 0.1.5
-ggplot2 | 3.4.4
-
-Commit 517815a is with fixed psi = 0.5 in training
-
 0. Compute 100 $(\rho^2, \kappa, \gamma$) points for the computer
-   experiment and check whether MLE asymptotically exists for each one
+   experiment and check whether MLE asymptotically exists for each
+   one, and produce Figure 1 of the manuscript.
 
 ```bash
 Rscript --no-init-file -e \
@@ -23,20 +18,21 @@ Rscript --no-init-file -e \
  'project_path <- "~/Repositories/mJPL-conjecture-supplementary/";
   ncores <- 10;
   nobs <- 2000;
-  psi <- 0.5;
+  psi <- 0;
   beta_star_setting <- "u2";
   repetitions <- 100;
   seed <- 101;
   source(file.path(project_path, "code/1-train-set.R"))'
 ```
 
-2. Predict conjectured approximation
+2. Predict conjectured approximation and produce Figure 2 and Table 1
+   of the manuscript.
 
 ```bash
 Rscript --no-init-file -e \
  'project_path <- "~/Repositories//mJPL-conjecture-supplementary";
   nobs <- 2000;
-  psi <- 0.5;
+  psi <- 0;
   beta_star_setting <- "u2";
   source(file.path(project_path, "code/2-conjecture.R"))'
 ```
@@ -153,16 +149,33 @@ Rscript --no-init-file -e \
   source(file.path(project_path, "code/4-test-set-pt.R"))'
 ```
 
-5. Reproduce Figure X1 in manuscript
+5. Reproduce Figure 3 of the manuscript
 ```bash
 Rscript --no-init-file -e \
  'project_path <- "~/Repositories/mJPL-conjecture-supplementary";
   ns <- c(1000, 2000, 3000)
   beta_star <- c("s1", "s2", "u1", "u2")
-  conjecture_model <- "conjecture-n-2000-beta-u2-psi-0.5.rda"
+  conjecture_model <- "conjecture-n-2000-beta-u2-psi-0.rda"
   source(file.path(project_path, "code/5-test-summaries.R"))'
 ```
 
+6. Reproduce Figure 4 in manuscript
+```bash
+Rscript --no-init-file -e \
+ 'project_path <- "~/Repositories/mJPL-conjecture-supplementary"
+  nobs <- c(3000, 1000)
+  beta_star_setting <- c("u1", "s1")
+  psi <- c(0.3, 0.6)
+  rhosq <- c(0.6, 0.1)
+  conjecture_model <- "conjecture-n-2000-beta-u2-psi-0.rda"
+  source(file.path(project_path, "code/6-validation-inset-plots.R"))'
+```
 
-
-
+7. Compute reported summaries on elapsed time
+```bash
+Rscript --no-init-file -e \
+ 'project_path <- "~/Repositories/mJPL-conjecture-supplementary"
+  nobs <- 2000
+  beta_star_setting <- "s2"
+  source(file.path(project_path, "code/7-computational-performance.R"))'
+```
