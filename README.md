@@ -168,7 +168,7 @@ Rscript --no-init-file -e \
   psi <- c(0.3, 0.6)
   rhosq <- c(0.6, 0.1)
   conjecture_model <- "conjecture-n-2000-beta-u2-psi-0.rda"
-  source(file.path(project_path, "code/6-validation-inset-plots.R"))'
+  source(file.path(project_path, "code/6-test-inset-plots.R"))'
 ```
 
 7. Compute reported summaries on elapsed time
