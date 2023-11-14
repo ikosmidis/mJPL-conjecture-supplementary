@@ -1,3 +1,47 @@
+## Estimate probability of separation
+estimate_inf_prob <- function(setting,
+                              beta_star_setting = "u2",
+                              n = 2000,
+                              n_simu = 50,
+                              ncores = 10) {
+    kappa <- setting$kappa
+    gamma <- setting$gamma
+    seed <- setting$seed
+    rhosq <- setting$rhosq
+    beta0 <- gamma * sqrt(rhosq)
+    psi <- setting$psi
+    p <- ceiling(n * kappa)
+    R <- chol(AR1cor(p, psi))
+    nz <- ceiling(p * 0.2)
+    beta_star <- switch(beta_star_setting,
+                        "s1" = seq(-10, 10, length.out = p),
+                        "s2" = c(rep(-10, nz), rep(10, nz), rep(0, p - 2 * nz)),
+                        "u1" = c(rep(-3, nz), rep(-1, nz), rep(0, p - 3 * nz), rep(1, nz)),
+                        "u2" = seq(1, 10, length.out = p),
+                        stop("invalid beta star setting"))
+    set.seed(seed)
+
+    datasets <- lapply(1:n_simu, function(j) {
+        dd <- simulate_ZSC2022(n = n,
+                               kappa = kappa,
+                               gamma = gamma,
+                               beta0 = beta0,
+                               R = R,
+                               beta_star = beta_star)
+        true_betas <- c(attr(dd, "beta0"), attr(dd, "beta"))
+        dd <- data.frame(Y = dd$Y, X = dd$X)
+        dd$Y <- 0.5 * (dd$Y + 1)
+        dd
+    })
+
+    form <- as.formula(paste("Y ~ -1 + ", paste("X", 1:(p + 1), sep = ".", collapse = " + ")))
+    res_sep <- mclapply(1:n_simu, function(j) {
+        glm(form, family = binomial(), data = datasets[[j]],
+            method = detectseparation::detect_infinite_estimates)$outcome
+    }, mc.cores = ncores)
+    mean(unlist(res_sep))
+}
+
 ## Phase transition curves
 compute_pt <- function(beta0 = 0,
                        gamma_grid = seq(0, 20, length = 100),
@@ -51,6 +95,28 @@ AR1cor <- function(p, rho) {
     sapply(1:p, \(k) rho^abs(k - 1:p))
 }
 
+simulate_ZSC2022_Bern <- function(n,
+                                  kappa = 0.2,
+                                  gamma = 1,
+                                  beta0 = 0,
+                                  prob = 0.5,
+                                  beta_star = rnorm(p)) {
+    ## Section 3.2.1. of DOI: 10.3150/21-BEJ1401
+    p <- ceiling(kappa * n)
+    gamma0 <- sqrt(gamma^2 - beta0^2)
+    X <- cbind(1, matrix(rbinom(n * p, 1, prob), nrow = n))
+    beta <- gamma0 * beta_star / sqrt(sum(beta_star^2) * prob * (1 - prob))
+    eta <- drop(X %*% c(beta0, beta))
+    Y <- 2 * (plogis(eta) > runif(n)) - 1
+    out <- list(Y = Y, X = X)
+    attr(out, "gamma0") <- gamma0
+    attr(out, "beta") <- beta
+    attr(out, "beta0") <- beta0
+    attr(out, "kappa") <- kappa
+    out
+}
+
+
 simulate_ZSC2022 <- function(n,
                              kappa = 0.2,
                              gamma = 1,
@@ -79,13 +145,13 @@ simulate_ZSC2022 <- function(n,
 
 
 compute_estimates <- function(setting,
-                             beta_star_setting = "u1",
-                             n = 1000,
-                             maxit = 250,
-                             tolerance = 1e-03,
-                             verbose = 0,
-                             current_setting = NULL,
-                             max_setting = NULL) {
+                              beta_star_setting = "u1",
+                              n = 1000,
+                              maxit = 250,
+                              tolerance = 1e-03,
+                              verbose = 0,
+                              current_setting = NULL,
+                              max_setting = NULL) {
     kappa <- setting$kappa
     gamma <- setting$gamma
     seed <- setting$seed
@@ -194,6 +260,98 @@ compute_estimates <- function(setting,
                               kappa = kappa,
                               gamma = gamma,
                               mle_exits = setting$mle_exists,
+                              n = n,
+                              p = p)
+    rownames(results) <- rownames(performance) <- NULL
+    attr(results, "performance") <- performance
+    attr(results, "seed") <- seed
+    results
+}
+
+compute_estimates_bern <- function(setting,
+                                   beta_star_setting = "u1",
+                                   n = 1000,
+                                   maxit = 250,
+                                   tolerance = 1e-03,
+                                   verbose = 0,
+                                   current_setting = NULL,
+                                   max_setting = NULL) {
+    kappa <- setting$kappa
+    gamma <- setting$gamma
+    seed <- setting$seed
+    rhosq <- setting$rhosq
+    beta0 <- gamma * sqrt(rhosq)
+    prob <- setting$prob
+    p <- ceiling(n * kappa)
+    nz <- ceiling(p * 0.2) ## nz_perc -x and nz_perc +x
+    beta_star <- switch(beta_star_setting,
+                        "s1" = seq(-10, 10, length.out = p),
+                        "s2" = c(rep(-10, nz), rep(10, nz), rep(0, p - 2 * nz)),
+                        "u1" = c(rep(-3, nz), rep(-1, nz), rep(0, p - 3 * nz), rep(1, nz)),
+                        "u2" = seq(1, 10, length.out = p),
+                        stop("invalid beta star setting"))
+    set.seed(seed)
+
+    dd <- simulate_ZSC2022_Bern(n = n,
+                                kappa = kappa,
+                                gamma = gamma,
+                                beta0 = beta0,
+                                prob = prob,
+                                beta_star = beta_star)
+    true_betas <- c(attr(dd, "beta0"), attr(dd, "beta"))
+    dd <- data.frame(Y = dd$Y, X = dd$X)
+    dd$Y <- 0.5 * (dd$Y + 1)
+
+    form <- as.formula(paste("Y ~ -1 + ", paste("X", 1:(p + 1), sep = ".", collapse = " + ")))
+    time_br <- system.time(
+        fit_br <- glm(form, family = binomial(), data = dd,
+                      type = "MPL_Jeffreys",
+                      method = "brglm_fit",
+                      max_step_factor = 1,
+                      check_aliasing = FALSE,
+                      start = rep(0, p + 1),
+                      epsilon = tolerance,
+                      maxit = maxit,
+                      trace = verbose)
+    )
+    coefs_br <- coef(fit_br)
+    ses_br <- summary(fit_br)$coef[, "Std. Error"]
+    elapsed_br <- time_br[["elapsed"]]
+    iter_br <- fit_br$iter
+
+    libeta_br <- max(abs(vcov(fit_br) %*% fit_br$grad[1:(p + 1)]), na.rm = TRUE)
+    if (!is.null(current_setting) & !is.null(max_setting)) {
+        cat(current_setting, "/", max_setting, "|| ")
+    }
+    diagnostics <- paste0("|delta_BR|_inf = ", round(libeta_br, 5), paste0("(", iter_br,")"))
+    cat("β* = ", beta_star_setting,
+        ", π = ", sprintf("%.2f", prob),
+        ", ρ^2 = ", sprintf("%.2f", rhosq),
+        ", κ = ", sprintf("%.2f", kappa),
+        ", γ = ", sprintf("%2.2f", gamma),
+        ", p = ",  sprintf("%2.2f", p),
+        ", n = ", nobs,
+        " : ", diagnostics,  "\n", sep = "")
+
+    results <- data.frame(method = rep("mJPL", each = length(true_betas)),
+                          estimate = c(coefs_br),
+                          se = c(ses_br),
+                          truth = c(true_betas),
+                          parameter = seq_along(true_betas) - 1,
+                          prob = prob,
+                          rhosq = rhosq,
+                          kappa = kappa,
+                          gamma = gamma,
+                          n = n,
+                          p = p)
+    performance <- data.frame(method = "mJPL",
+                              elapsed = elapsed_br,
+                              iter = iter_br,
+                              libeta = libeta_br,
+                              prob = prob,
+                              rhosq = rhosq,
+                              kappa = kappa,
+                              gamma = gamma,
                               n = n,
                               p = p)
     rownames(results) <- rownames(performance) <- NULL

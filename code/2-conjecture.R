@@ -172,3 +172,4 @@ print(memisc:::toLatex.default(Confint(bglm), digits = 3))
 ## deviance explained
 with(summary(glm_noMLE_gamma0), 1 - deviance/null.deviance)
 
+

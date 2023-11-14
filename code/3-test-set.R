@@ -2,7 +2,7 @@ library("parallel")
 library("brglm2")
 
 if (interactive()) {
-    project_path <- "~/Desktop/mJPL-conjecture"
+    project_path <- "~/Repositories/mJPL-conjecture-supplementary"
     ## Number of cores to use for determining whether MLE exists across settings
     ncores <- 10
     ## Number of observations per dataset
