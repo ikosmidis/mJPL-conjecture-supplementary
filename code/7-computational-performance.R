@@ -1,3 +1,4 @@
+library("memisc")
 library("dplyr")
 library("ggplot2")
 
@@ -25,3 +26,8 @@ mJPL_perf <- performance |> group_by(kappa, gamma, p) |> filter(method == "mJPL"
               max_iter = max(iter))
 
 print(range(mJPL_perf$mean_elapsed))
+
+print(toLatex(mJPL_perf |> data.frame(), digits = 2))
+
+
+

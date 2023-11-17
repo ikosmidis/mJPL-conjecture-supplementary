@@ -159,8 +159,8 @@ p_s_noMLE <-
          y = expression(log * " " * delta[1]^"*"),
          title = "MLE does not exist")
 
-pdf(file.path(figure_path, "conjecture.pdf"), width = 8, height = 8/sqrt(2))
-## pdf(file.path("~/Repositories/mJPL-conjecture/figures", "conjecture.pdf"), width = 8, height = 8/sqrt(2))
+pdf(file.path(figure_path, "conjecture.pdf"), width = 6, height = 6)
+## pdf(file.path("~/Repositories/mJPL-conjecture/figures", "conjecture.pdf"), width = 6, height = 6)
 print(((p_s_noMLE + p_kg) + plot_layout(widths = c(2, 1))) / p_hi_int)
 dev.off()
 

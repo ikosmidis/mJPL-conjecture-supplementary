@@ -159,7 +159,7 @@ Rscript --no-init-file -e \
   source(file.path(project_path, "code/5-test-summaries.R"))'
 ```
 
-6. Reproduce Figure 4 in manuscript
+6. Reproduce Figure 4 and Figure 5 in manuscript
 ```bash
 Rscript --no-init-file -e \
  'project_path <- "~/Repositories/mJPL-conjecture-supplementary"
@@ -171,11 +171,24 @@ Rscript --no-init-file -e \
   source(file.path(project_path, "code/6-test-inset-plots.R"))'
 ```
 
-7. Compute reported summaries on elapsed time
+7. Compute reported summaries on elapsed time in Table 2
 ```bash
 Rscript --no-init-file -e \
  'project_path <- "~/Repositories/mJPL-conjecture-supplementary"
   nobs <- 2000
   beta_star_setting <- "s2"
   source(file.path(project_path, "code/7-computational-performance.R"))'
+```
+
+8. Reproduce Figure 6 in manuscript
+```bash
+Rscript --no-init-file -e \
+ 'project_path <- "~/Repositories/mJPL-conjecture-supplementary"
+  nobs <- 2000
+  ncores <- 10
+  beta_star_setting <- "s1"
+  seed <- 111
+  rsqs <- 0.3
+  conjecture_model <- "conjecture-n-2000-beta-u2-psi-0.rda"
+  source(file.path(project_path, "code/8-bernoulli.R"))'
 ```

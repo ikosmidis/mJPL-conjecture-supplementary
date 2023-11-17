@@ -88,7 +88,7 @@ p_rsq_ne <- ggplot(rsqs, aes(rhosq, rsq)) +
     geom_hline(aes(yintercept = 1), col = "darkgrey", lty = 1) +
     facet_grid(psi_fac ~ beta_star, labeller = label_parsed) +
     theme_minimal() +
-    theme(legend.position = "left", axis.text.x = element_text(size = 6)) +
+    theme(legend.position = "bottom") +
     scale_color_manual(values = okabe, name = "n") +
     coord_cartesian(y = c(0.7, 1)) +
     labs(x = expression(rho^2), y = expression(R["test"]^2), title = "MLE does not exist")
@@ -103,7 +103,7 @@ p_bp_e <- ggplot(coefs_restr) +
     geom_vline(aes(xintercept = 1), col = "grey", lty = 1) +
     facet_grid(psi_fac ~ beta_star, labeller = label_parsed) +
     theme_minimal() +
-    theme(legend.position = "none", axis.text.x = element_text(size = 6)) +
+    theme(legend.position = "none") +
     scale_color_manual(values = okabe, name = "n") +
     labs(y = "n", x = expression(delta[1]^"*"), title = "MLE exists")
 
@@ -115,17 +115,12 @@ p_bp_int <- ggplot(coefs |> filter(method == "mJPL")) +
     geom_vline(aes(xintercept = 0), col = "grey", lty = 1) +
     facet_grid(psi_fac ~ beta_star, labeller = label_parsed) +
     theme_minimal() +
-    theme(legend.position = "none", axis.text.x = element_text(size = 6)) +
+    theme(legend.position = "none") +
     scale_color_manual(values = okabe, name = "n") +
     labs(y = "n", x = expression(delta[0]^"*"))
 
-pdf(file.path(project_path, "figures/test.pdf"), width = 8.5, height = 8.5/sqrt(2))
-## pdf(file.path("~/Repositories/mJPL-conjecture/figures", "test.pdf"), width = 9, height = 9/sqrt(2))
-layout <- "
-AABB
-CDD#
-"
-print((p_rsq_ne + p_bp_e + guide_area() + p_bp_int) +
-    plot_layout(design = layout, guides = "collect"))
+pdf(file.path(project_path, "figures/test.pdf"), width = 6, height = 9)
+## pdf(file.path("~/Repositories/mJPL-conjecture/figures", "test.pdf"), width = 6, height = 9)
+print((p_bp_int / p_bp_e / p_rsq_ne))
 dev.off()
 

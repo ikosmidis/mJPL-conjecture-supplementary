@@ -319,6 +319,10 @@ compute_estimates_bern <- function(setting,
     elapsed_br <- time_br[["elapsed"]]
     iter_br <- fit_br$iter
 
+    ## Check existence
+    mle_exists <- !glm(form, family = binomial(), data = dd,
+                       method = detect_infinite_estimates)$outcome
+
     libeta_br <- max(abs(vcov(fit_br) %*% fit_br$grad[1:(p + 1)]), na.rm = TRUE)
     if (!is.null(current_setting) & !is.null(max_setting)) {
         cat(current_setting, "/", max_setting, "|| ")
@@ -342,6 +346,7 @@ compute_estimates_bern <- function(setting,
                           rhosq = rhosq,
                           kappa = kappa,
                           gamma = gamma,
+                          mle_exists = mle_exists,
                           n = n,
                           p = p)
     performance <- data.frame(method = "mJPL",
@@ -352,6 +357,7 @@ compute_estimates_bern <- function(setting,
                               rhosq = rhosq,
                               kappa = kappa,
                               gamma = gamma,
+                              mle_exists = mle_exists,
                               n = n,
                               p = p)
     rownames(results) <- rownames(performance) <- NULL

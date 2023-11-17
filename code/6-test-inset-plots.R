@@ -141,9 +141,17 @@ for (j in seq.int(nrow(settings))) {
     cat(j, "\n")
 }
 
-
-pdf(file.path(project_path, "figures/illustration.pdf"),
-    width = 9, height = 9 / sqrt(2))
-print(plots[[1]] | plots[[2]])
+pdf(file.path(project_path, "figures/illustration1.pdf"), width = 6, height = 9)
+print(plots[[1]])
 dev.off()
+
+pdf(file.path(project_path, "figures/illustration2.pdf"), width = 6, height = 9)
+print(plots[[2]])
+dev.off()
+
+
+## pdf(file.path(project_path, "figures/illustration.pdf"),
+##     width = 9, height = 9 / sqrt(2))
+## print(plots[[1]] | plots[[2]])
+## dev.off()
 
