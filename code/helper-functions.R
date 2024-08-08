@@ -146,6 +146,7 @@ simulate_ZSC2022 <- function(n,
 
 compute_estimates <- function(setting,
                               beta_star_setting = "u1",
+                              beta_star = NULL,
                               n = 1000,
                               maxit = 250,
                               tolerance = 1e-03,
@@ -158,15 +159,21 @@ compute_estimates <- function(setting,
     rhosq <- setting$rhosq
     beta0 <- gamma * sqrt(rhosq)
     psi <- setting$psi
-    p <- ceiling(n * kappa)
+    if (is.null(beta_star)) {
+        p <- ceiling(n * kappa)
+        nz <- ceiling(p * 0.2) ## nz_perc -x and nz_perc +x
+        beta_star <- switch(beta_star_setting,
+                            "s1" = seq(-10, 10, length.out = p),
+                            "s2" = c(rep(-10, nz), rep(10, nz), rep(0, p - 2 * nz)),
+                            "u1" = c(rep(-3, nz), rep(-1, nz), rep(0, p - 3 * nz), rep(1, nz)),
+                            "u2" = seq(1, 10, length.out = p),
+                            stop("invalid beta star setting"))
+    } else {
+        p <- length(beta_star)
+        beta_star_setting <- "custom"
+    }
     R <- chol(AR1cor(p, psi))
-    nz <- ceiling(p * 0.2) ## nz_perc -x and nz_perc +x
-    beta_star <- switch(beta_star_setting,
-                        "s1" = seq(-10, 10, length.out = p),
-                        "s2" = c(rep(-10, nz), rep(10, nz), rep(0, p - 2 * nz)),
-                        "u1" = c(rep(-3, nz), rep(-1, nz), rep(0, p - 3 * nz), rep(1, nz)),
-                        "u2" = seq(1, 10, length.out = p),
-                        stop("invalid beta star setting"))
+
     set.seed(seed)
 
     dd <- simulate_ZSC2022(n = n,
@@ -236,7 +243,7 @@ compute_estimates <- function(setting,
         ", κ = ", sprintf("%.2f", kappa),
         ", γ = ", sprintf("%2.2f", gamma),
         ", p = ",  sprintf("%2.2f", p),
-        ", n = ", nobs,
+        ", n = ", n,
         " : ", diagnostics,  "\n", sep = "")
 
     results <- data.frame(method = rep(c("ML", "mJPL"), each = length(true_betas)),
@@ -270,6 +277,7 @@ compute_estimates <- function(setting,
 
 compute_estimates_bern <- function(setting,
                                    beta_star_setting = "u1",
+                                   beta_start = NULL,
                                    n = 1000,
                                    maxit = 250,
                                    tolerance = 1e-03,
@@ -282,15 +290,22 @@ compute_estimates_bern <- function(setting,
     rhosq <- setting$rhosq
     beta0 <- gamma * sqrt(rhosq)
     prob <- setting$prob
-    p <- ceiling(n * kappa)
-    nz <- ceiling(p * 0.2) ## nz_perc -x and nz_perc +x
-    beta_star <- switch(beta_star_setting,
-                        "s1" = seq(-10, 10, length.out = p),
-                        "s2" = c(rep(-10, nz), rep(10, nz), rep(0, p - 2 * nz)),
-                        "u1" = c(rep(-3, nz), rep(-1, nz), rep(0, p - 3 * nz), rep(1, nz)),
-                        "u2" = seq(1, 10, length.out = p),
-                        stop("invalid beta star setting"))
-    set.seed(seed)
+
+    if (is.null(beta_star)) {
+
+        p <- ceiling(n * kappa)
+        nz <- ceiling(p * 0.2) ## nz_perc -x and nz_perc +x
+        beta_star <- switch(beta_star_setting,
+                            "s1" = seq(-10, 10, length.out = p),
+                            "s2" = c(rep(-10, nz), rep(10, nz), rep(0, p - 2 * nz)),
+                            "u1" = c(rep(-3, nz), rep(-1, nz), rep(0, p - 3 * nz), rep(1, nz)),
+                            "u2" = seq(1, 10, length.out = p),
+                            stop("invalid beta star setting"))
+        set.seed(seed)
+    } else {
+        p <- length(beta_star)
+        beta_star_setting <- "custom"
+    }
 
     dd <- simulate_ZSC2022_Bern(n = n,
                                 kappa = kappa,
@@ -334,7 +349,7 @@ compute_estimates_bern <- function(setting,
         ", κ = ", sprintf("%.2f", kappa),
         ", γ = ", sprintf("%2.2f", gamma),
         ", p = ",  sprintf("%2.2f", p),
-        ", n = ", nobs,
+        ", n = ", n,
         " : ", diagnostics,  "\n", sep = "")
 
     results <- data.frame(method = rep("mJPL", each = length(true_betas)),
