@@ -8,7 +8,7 @@ if (interactive()) {
     image_path <- file.path(project_path, "images")
     code_path <- file.path(project_path, "code")
     figure_path <- file.path(project_path, "figures")
-    nobs <- 1000
+    nobs <- 2000
     repetitions <- 20
     ncores <- 10
     ## seed for generating unique seeds
@@ -55,7 +55,10 @@ settings <- settings |> transform(p = nobs * kappa,
 ## base_beta <- c(-10, 0, 0, 0)
 results <- mclapply(1:n_settings, function(s) {
     setting <- settings[s, ]
-    beta_s <- rep(c(1, 2), each = settings[s, "p"] / 10)
+    ## beta_s <- rep(c(1, 2), each = settings[s, "p"] / 10)
+    ## beta_s <- c(beta_s, rep(0, settings[s, "p"] - length(beta_s)))
+    set.seed(setting$seed)
+    beta_s <- rnorm(settings[s, "p"] / 10, 1, 1)
     beta_s <- c(beta_s, rep(0, settings[s, "p"] - length(beta_s)))
     out <- compute_estimates(setting,
                              n = nobs,
@@ -73,7 +76,7 @@ results <- mclapply(1:n_settings, function(s) {
 estimates <- do.call("rbind", results)
 
 out_file <- file.path(image_path, "ridge-mDYPL-comparisons.rda")
-save(base_beta, maxit, tolerance, n_settings, settings, estimates, file = out_file)
+save(maxit, tolerance, n_settings, settings, estimates, file = out_file)
 
 
 
@@ -115,9 +118,9 @@ source(file.path(code_path, "helper-functions.R"))
 
 
 mses_mJPL <- estimates |>
-    correct_mJPL_estimates(pk = po_k, pg = po_g, pr = po_r) |>
     ## Rescale estimates to match covariate setting (i.e. x_i ~ N(0, 1/ p I))
     mutate(estimate = sqrt(p) * estimate, truth = sqrt(p) * truth) |>
+    correct_mJPL_estimates(pk = po_k, pg = po_g, pr = po_r) |>
     group_by(method, gamma, kappa, p, sample) |>
     summarize(mse = mean((estimate - truth)^2),
               bias = mean(estimate - truth)) |>
