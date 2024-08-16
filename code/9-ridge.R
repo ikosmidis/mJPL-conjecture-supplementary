@@ -2,13 +2,11 @@ library("parallel")
 library("brglm2")
 
 if (interactive()) {
-    conjecture_model <- "conjecture-n-2000-beta-u2-psi-0.rda"
     project_path <- "~/Repositories/mJPL-conjecture-supplementary"
     image_path <- file.path(project_path, "images")
     code_path <- file.path(project_path, "code")
-    figure_path <- file.path(project_path, "figures")
     nobs <- 2000
-    repetitions <- 5
+    repetitions <- 50
     ncores <- 10
     ## seed for generating unique seeds
     seed <- 207

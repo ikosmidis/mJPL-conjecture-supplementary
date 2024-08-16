@@ -180,7 +180,7 @@ Rscript --no-init-file -e \
   source(file.path(project_path, "code/7-computational-performance.R"))'
 ```
 
-8. Reproduce Figure 6 in manuscript
+8. Reproduce Figure 6 of the manuscript
 ```bash
 Rscript --no-init-file -e \
  'project_path <- "~/Repositories/mJPL-conjecture-supplementary"
@@ -191,4 +191,30 @@ Rscript --no-init-file -e \
   rsqs <- 0.3
   conjecture_model <- "conjecture-n-2000-beta-u2-psi-0.rda"
   source(file.path(project_path, "code/8-bernoulli.R"))'
+```
+
+9. Carry out the simulation study of Section 6.2 for the estimation of
+   the aggregate MSE of the rescaled mJPL estimator
+```bash
+Rscript --no-init-file -e \
+ 'project_path <- "~/Repositories/mJPL-conjecture-supplementary"
+  image_path <- file.path(project_path, "images")
+  code_path <- file.path(project_path, "code")
+  nobs <- 2000
+  repetitions <- 50
+  ncores <- 10
+  ## seed for generating unique seeds
+  seed <- 207
+  source(file.path(project_path, "code/9-ridge.R"))'
+```
+
+10. Reproduce Figure 7 of the manuscript
+```bash
+Rscript --no-init-file -e \
+ 'conjecture_model <- "conjecture-n-2000-beta-u2-psi-0.rda"
+  project_path <- "~/Repositories/mJPL-conjecture-supplementary"
+  image_path <- file.path(project_path, "images")
+  code_path <- file.path(project_path, "code")
+  figure_path <- file.path(project_path, "figures")
+  source(file.path(project_path, "code/10-ridge-summaries.R"))'
 ```
