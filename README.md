@@ -1,3 +1,12 @@
+# Installing the `minimaxdesign` R package
+`minimaxdesign` is no longer available on CRAN. Please see [this archive](https://cran.r-project.org/src/contrib/Archive/minimaxdesign/) and download `minimaxdesign_0.1.5.tar.gz` and install the package locally with
+
+```R
+install.packages("path/to/file/minimaxdesign_0.1.5.tar.gz", type = "source", repos = NULL)
+```
+You may have to install additional dependencies.
+
+# Reproduce simulations, tables and figures.
 0. Compute 100 $(\rho^2, \kappa, \gamma$) points for the computer
    experiment and check whether MLE asymptotically exists for each
    one, and produce Figure 1 of the manuscript.
@@ -30,7 +39,7 @@ Rscript --no-init-file -e \
 
 ```bash
 Rscript --no-init-file -e \
- 'project_path <- "~/Repositories//mJPL-conjecture-supplementary";
+ 'project_path <- "~/Repositories/mJPL-conjecture-supplementary";
   nobs <- 2000;
   psi <- 0;
   beta_star_setting <- "u2";
