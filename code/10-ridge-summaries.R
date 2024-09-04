@@ -94,6 +94,12 @@ min_mses <- min_mses |>
 min_mses <- min_mses |> mutate(gamma_lab = factor(paste("gamma ==", gamma),
                                                   levels = paste("gamma ==", unique(gamma)),
                                                   ordered = TRUE))
+## Force colors in plots
+color_scale <- scale_fill_manual(
+    values = c("FALSE" = "#F8766D", "TRUE" = "#00BFC4"),
+    limits = c(FALSE, TRUE)
+)
+
 
 m_mJPL_ridge <- ggplot(min_mses) +
     geom_col(aes(kappa, ratio_ridge, fill = mle_exists)) +
@@ -124,7 +130,8 @@ m_mJPL_ML <- ggplot(min_mses) +
     lims(y = c(0, 3)) +
     theme_minimal() +
     theme(legend.position = "top",
-          axis.text.x = element_blank())
+          axis.text.x = element_blank()) +
+    color_scale
 
 pdf(file.path(project_path, "figures/vs-ridge.pdf"), width = 8, height = 5)
 print(m_mJPL_ML / m_mJPL_ridge)
@@ -132,7 +139,6 @@ dev.off()
 
 ## Range of aggregate bias
 range(mses_mJPL$bias)
-
 
 
 ## ggplot(all_mses |>
