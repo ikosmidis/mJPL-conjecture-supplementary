@@ -168,8 +168,14 @@ dev.off()
 library("car")
 set.seed(111)
 bglm <- Boot(glm_noMLE_gamma0, method = "case", R = 9999, ncores = 1)
-print(memisc:::toLatex.default(Confint(bglm), digits = 3))
+disp <- matrix(c(summary(glm_noMLE_gamma0)$dispersion, NA, NA), nrow = 1)
+row.names(disp) <- c("phi")
+tab1 <- rbind(Confint(bglm), disp)
+print(memisc:::toLatex.default(tab1, digits = 3))
 ## deviance explained
 with(summary(glm_noMLE_gamma0), 1 - deviance/null.deviance)
+
+
+
 
 
