@@ -277,7 +277,7 @@ compute_estimates <- function(setting,
 
 compute_estimates_bern <- function(setting,
                                    beta_star_setting = "u1",
-                                   beta_start = NULL,
+                                   beta_star = NULL,
                                    n = 1000,
                                    maxit = 250,
                                    tolerance = 1e-03,
