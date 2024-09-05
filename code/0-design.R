@@ -99,7 +99,6 @@ p_ag0 <- ggplot(e_set) +
     theme(legend.position = "top")
 
 pdf(file.path(figure_path, "design.pdf"), width = 6, height = 6)
-## pdf(file.path("~/Repositories/mJPL-conjecture/figures", "design.pdf"), width = 6, height = 6)
 print((p_kg | p_ag0) / (p_kr | p_gr))
 dev.off()
 
