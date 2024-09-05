@@ -1,12 +1,15 @@
 # Installing the `minimaxdesign` R package
-`minimaxdesign` is no longer available on CRAN. Please see [this archive](https://cran.r-project.org/src/contrib/Archive/minimaxdesign/) and download `minimaxdesign_0.1.5.tar.gz` and install the package locally with
+
+At the time of producing the current version of the supplementary material, the `minimaxdesign` R package has been archived on CRAN.  Please run the following code in order to install it.
 
 ```R
-install.packages("path/to/file/minimaxdesign_0.1.5.tar.gz", type = "source", repos = NULL)
+pkg_url <- "https://cran.r-project.org/src/contrib/Archive/minimaxdesign/minimaxdesign_0.1.5.tar.gz"
+install.packages(pkg_url, type = "source", repos = NULL)
 ```
 You may have to install additional dependencies.
 
 # Reproduce simulations, tables and figures.
+
 0. Compute 100 $(\rho^2, \kappa, \gamma$) points for the computer
    experiment and check whether MLE asymptotically exists for each
    one, and produce Figure 1 of the manuscript.
