@@ -94,6 +94,12 @@ min_mses <- min_mses |>
 min_mses <- min_mses |> mutate(gamma_lab = factor(paste("gamma ==", gamma),
                                                   levels = paste("gamma ==", unique(gamma)),
                                                   ordered = TRUE))
+## Force colors in plots
+color_scale <- scale_fill_manual(
+    values = c("FALSE" = "#F8766D", "TRUE" = "#00BFC4"),
+    limits = c(FALSE, TRUE)
+)
+
 
 m_mJPL_ridge <- ggplot(min_mses) +
     geom_col(aes(kappa, ratio_ridge, fill = mle_exists)) +
@@ -122,9 +128,11 @@ m_mJPL_ML <- ggplot(min_mses) +
          x = element_blank(),
          fill = "MLE exists") +
     lims(y = c(0, 3)) +
+    scale_x_continuous(breaks = (1:6) / 10) +
     theme_minimal() +
     theme(legend.position = "top",
-          axis.text.x = element_blank())
+          axis.text.x = element_blank()) +
+    color_scale
 
 pdf(file.path(project_path, "figures/vs-ridge.pdf"), width = 8, height = 5)
 print(m_mJPL_ML / m_mJPL_ridge)
@@ -132,19 +140,3 @@ dev.off()
 
 ## Range of aggregate bias
 range(mses_mJPL$bias)
-
-
-
-## ggplot(all_mses |>
-##        group_by(kappa, gamma) |>
-##        mutate(smse = mse / min(mse, na.rm = TRUE)) |>
-##        mutate(kappa_lab = factor(paste("kappa ==", kappa)),
-##               gamma_lab = factor(paste("gamma ==", gamma)))) +
-##     geom_hline(aes(yintercept = 1), col = "grey") +
-##     geom_line(aes(lambda, smse, color = method)) +
-##     facet_grid(kappa_lab ~ gamma_lab, labeller = label_parsed) +
-##     coord_cartesian(y = c(1, 3), x = c(0, 1)) +
-##     labs(x = expression(lambda), y = expression(MSE / minMSE)) +
-##     scale_color_manual(values = cols[c(1, 5, 3)]) +
-##     theme_minimal() +
-##     theme(legend.position = "top")
