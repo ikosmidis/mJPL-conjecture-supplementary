@@ -141,14 +141,14 @@ You may have to install additional dependencies.
 # Reproducing the results
 
 The results can be reproduced in a Unix-based shell environment by
-running the following commands in the order they appear. Some of scripts
-used below rely on parallel computing, which is implemented through the
-`parallel` R package. Those scripts will not work on Windows unless
-`ncores <- 1` (which will lead in long compute times and is not
+running the following commands in the order they appear. Some of the
+scripts used below rely on parallel computing, which is implemented
+through the `parallel` R package. Those scripts will not work on Windows
+unless `ncores <- 1` (which will lead in long compute times and is not
 recommended) or they are modified to use a different parallel back-end.
 All steps should work directly in macOS and Linux systems.
 
-1.  Compute 100 (*ρ*<sup>2</sup>, *κ*, *γ*) points for the computer
+0.  Compute 100 (*ρ*<sup>2</sup>, *κ*, *γ*) points for the computer
     experiment and check whether MLE asymptotically exists for each one,
     and produce Figure 1 of the manuscript.
 
@@ -181,7 +181,7 @@ Inputs: `images/design-training.rda`
 
 Outputs: `images/estimates-n-2000-beta-u2-psi-0-training.rda`
 
-1.  Predict conjectured approximation and produce Figure 2 and Table 1
+2.  Predict conjectured approximation and produce Figure 2 and Table 1
     of the manuscript.
 
 ``` bash
@@ -199,7 +199,7 @@ Inputs: `images/design-training.rda`,
 Outputs: `images/conjecture-n-2000-beta-u2-psi-0.rda`,
 `figures/conjecture.pdf` (Figure 2), Table 1
 
-1.  Produce test sets
+3.  Produce test sets
 
 ``` bash
 Rscript --no-init-file -e \
@@ -312,7 +312,7 @@ Outputs: `images/estimates-n-1000-beta-s1-test.rda`,
 `images/estimates-n-3000-beta-u1-test.rda`,
 `images/estimates-n-3000-beta-u2-test.rda`
 
-1.  Compute phase transition curves for the setting where the test sets
+4.  Compute phase transition curves for the setting where the test sets
     have been produced
 
 ``` bash
@@ -325,7 +325,7 @@ Rscript --no-init-file -e \
 
 Outputs: `images/pt-curves-test.rda`
 
-1.  Reproduce Figure 3 of the manuscript
+5.  Reproduce Figure 3 of the manuscript
 
 ``` bash
 Rscript --no-init-file -e \
@@ -352,7 +352,7 @@ Inputs: `images/conjecture-n-2000-beta-u2-psi-0.rda`,
 
 Outputs: `figures/test.pdf` (Figure 3)
 
-1.  Reproduce Figure 4 and Figure 5 in manuscript
+6.  Reproduce Figure 4 and Figure 5 in manuscript
 
 ``` bash
 Rscript --no-init-file -e \
@@ -372,7 +372,7 @@ Inputs: `images/conjecture-n-2000-beta-u2-psi-0.rda`,
 Outputs: `figures/illustration1.pdf` (Figure 4),
 `figures/illustration2.pdf` (Figure 5)
 
-1.  Compute reported summaries on elapsed time in Table 2
+7.  Compute reported summaries on elapsed time in Table 2
 
 ``` bash
 Rscript --no-init-file -e \
@@ -386,7 +386,7 @@ Inputs: `images/estimates-n-2000-beta-s2-test.rda`
 
 Outputs: Table 2
 
-1.  Reproduce Figure 6 of the manuscript
+8.  Reproduce Figure 6 of the manuscript
 
 ``` bash
 Rscript --no-init-file -e \
@@ -404,7 +404,7 @@ Inputs: `images/conjecture-n-2000-beta-u2-psi-0.rda`
 
 Outputs: `images/bernoulli.rda`, `figures/bernoulli.pdf` (Figure 6)
 
-1.  Carry out the simulation study of Section 6.2 for the estimation of
+9.  Carry out the simulation study of Section 6.2 for the estimation of
     the aggregate MSE of the rescaled mJPL estimator
 
 ``` bash
@@ -422,7 +422,7 @@ Rscript --no-init-file -e \
 
 Outputs: `images/mJPL_ridge_comparison.rda`
 
-1.  Reproduce Figure 7 of the manuscript
+10.  Reproduce Figure 7 of the manuscript
 
 ``` bash
 Rscript --no-init-file -e \
