@@ -1,5 +1,7 @@
 # Supplementary material code for “Jeffreys-prior penalty for high-dimensional logistic regression: A conjecture about aggregate bias”
+
 Ioannis Kosmidis, Patrick Zietkiewicz
+
 September 6, 2024
 
 # Directory structure
