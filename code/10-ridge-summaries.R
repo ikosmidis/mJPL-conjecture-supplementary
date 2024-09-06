@@ -115,7 +115,7 @@ m_mJPL_ridge <- ggplot(min_mses) +
     scale_x_continuous(breaks = (1:6) / 10) +
     theme_minimal() +
     theme(legend.position = "none", strip.text = element_blank(),
-          axis.text.x = element_text(angle = 45, hjust = 1))
+          axis.text.x = element_text(angle = 45, hjust = 1, size = 7))
 
 m_mJPL_ML <- ggplot(min_mses) +
     geom_col(aes(kappa, ratio_ML, fill = mle_exists)) +
@@ -134,7 +134,7 @@ m_mJPL_ML <- ggplot(min_mses) +
           axis.text.x = element_blank()) +
     color_scale
 
-pdf(file.path(project_path, "figures/vs-ridge.pdf"), width = 8, height = 5)
+pdf(file.path(project_path, "figures/vs-ridge.pdf"), width = 6, height = 5)
 print(m_mJPL_ML / m_mJPL_ridge)
 dev.off()
 
