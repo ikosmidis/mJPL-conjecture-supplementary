@@ -59,7 +59,7 @@ The directory `code/` contains the scripts
 
 that reproduce all the numerical results and figures in the manuscript
 
-> Kosmidis I, Zietkiewicz P (2023). Jeffreys-prior penalty for
+> Kosmidis I, Zietkiewicz P (2024). Jeffreys-prior penalty for
 > high-dimensional logistic regression: A conjecture about aggregate
 > bias. https://arxiv.org/abs/2311.11290
 
